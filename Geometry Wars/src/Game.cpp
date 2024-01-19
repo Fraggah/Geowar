@@ -11,14 +11,17 @@ void Game::run()
 	while (m_running)
 	{
 		m_manager.update();
-
-		if (!m_paused)
+		if (!m_menu)
 		{
-			sLifeSpan();
-			sSpawner();
-			sMovement();
-			sCollision();
+			if (!m_paused)
+			{
+				sLifeSpan();
+				sSpawner();
+				sMovement();
+				sCollision();
+			}
 		}
+
 		sUserInput();
 		sRender();
 
@@ -218,25 +221,40 @@ void Game::init(const std::string& config)
 			m_bulletConfig.SB = specialBulletAmount;
 		}
 	}
+
+
+	spawnPlayer();
+
+	std::string title = "GEOWARS";
+	m_title.setFont(m_font);
+	m_title.setString(title);
+	m_title.setCharacterSize(200);
+	m_title.setFillColor(sf::Color::Black);
+	m_title.setPosition(sf::Vector2f((m_window.getSize().x / 2) - (m_title.getGlobalBounds().width / 2) - 20, (m_window.getSize().y / 2) - (m_title.getGlobalBounds().height / 2) - 50));
+
 	std::string scorei = "SCORE ";
 	scorei += std::to_string(m_score);
 	m_scoreText.setPosition(10, 7);
 	m_scoreText.setString(scorei);
 
-	spawnPlayer();
-
 	rect.setSize(sf::Vector2f(1920, 40));
 	rect.setFillColor(sf::Color(20, 20, 20));
-
 	rectp.setFillColor(sf::Color(0, 0, 0, 200));
 	rectp.setSize(sf::Vector2f(1920,1080));
+
+	std::string pausei = "PAUSE";
+	m_pauseText.setFont(m_font);
+	m_pauseText.setString(pausei);
+	m_pauseText.setCharacterSize(200);
+	m_pauseText.setFillColor(sf::Color::Black);
+	m_pauseText.setPosition(sf::Vector2f((m_window.getSize().x / 2) - (m_pauseText.getGlobalBounds().width / 2) -20, (m_window.getSize().y / 2) - (m_pauseText.getGlobalBounds().height / 2) - 50));
 
 
 	std::string lifei = "LIFES x";
 	lifei += std::to_string(m_lifes); 
 	m_lifeText.setFont(m_font);
-	m_lifeText.setPosition(1800, 7);
-	m_lifeText.setFillColor(sf::Color::White);
+	m_lifeText.setPosition(1790, 7);
+	m_lifeText.setFillColor(sf::Color(130,130,130));
 	m_lifeText.setCharacterSize(24);
 	m_lifeText.setString(lifei);
 }
@@ -297,6 +315,11 @@ void Game::sUserInput()
 			}
 			case sf::Event::KeyPressed:
 			{
+				if (event.key.code == sf::Keyboard::Enter && m_menu == true)
+				{
+					m_menu = false;
+					
+				}
 				if (event.key.code == sf::Keyboard::Escape)
 				{
 					m_running = false;
@@ -386,21 +409,29 @@ void Game::sRender()
 {
 	m_window.clear(sf::Color(100,100,100));
 
-	m_window.draw(rect);
-
-	if (m_paused)
+	if (m_menu)
 	{
-		m_window.draw(rectp);
+		m_window.draw(m_title);
 	}
 
-	for (auto e : m_manager.getEntities())
+	if (!m_menu)
 	{
-		e->cShape->circle.setPosition(e->cTransform->pos.x, e->cTransform->pos.y);
-		m_window.draw(e->cShape->circle);
-	}
-	m_window.draw(m_scoreText);
-	m_window.draw(m_lifeText);
-	
+		m_window.draw(rect);
+
+		for (auto e : m_manager.getEntities())
+		{
+			e->cShape->circle.setPosition(e->cTransform->pos.x, e->cTransform->pos.y);
+			m_window.draw(e->cShape->circle);
+		}
+		if (m_paused)
+		{
+			m_window.draw(rectp);
+			m_window.draw(m_pauseText);
+		}
+
+		m_window.draw(m_scoreText);
+		m_window.draw(m_lifeText);
+	}	
 	m_window.display();
 }
 
@@ -570,7 +601,7 @@ void Game::spawnEnemy()
 		static_cast<double>(minPosY + (rand() % (maxPosY - minPosY + 1)))
 	};
 
-	while (std::sqrt(std::pow(randPos.x - m_player->cTransform->pos.x*1.5, 2.0) + std::pow(randPos.y - m_player->cTransform->pos.y*1.5, 2.0)) < 2.0 * m_enemyConfig.CR)
+	while (std::sqrt(std::pow(randPos.x - m_player->cTransform->pos.x*3, 2.0) + std::pow(randPos.y - m_player->cTransform->pos.y*3, 2.0)) < 2.0 * m_enemyConfig.CR)
 	{
 		randPos = Vec2
 		{

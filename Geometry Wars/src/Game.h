@@ -19,15 +19,18 @@ private:
 	sf::Text			m_scoreText;					
 	sf::Text			m_lifeText;
 	sf::Text			m_pauseText;
+	sf::Text			m_title;
 	PlayerConfig		m_playerConfig;				
 	EnemyConfig			m_enemyConfig;					
 	BulletConfig		m_bulletConfig;					
-	int					m_score = 0;
-	int					m_lifes = 3;
-	int					m_currentFrame{ 0 };
-	int					m_lastEnemySpawnTime{ 0 };
-	bool				m_paused{ false };				
-	bool				m_running{ true };				
+	int					m_score              = 0;
+	int					m_lifes              = 3;
+	int					m_currentFrame       = 0;
+	int					m_lastEnemySpawnTime = 0;
+	bool				m_paused             = false;				
+	bool				m_running            = true;
+	bool				m_menu	             = true;
+	bool				m_gameOver           = false;
 
 	std::shared_ptr<Entity> m_player;
 
@@ -39,7 +42,7 @@ private:
 	void sLifeSpan();								
 	void sRender();								
 	void sSpawner();							
-	void sCollision();			
+	void sCollision();
 	
 	sf::RectangleShape rect;
 	sf::RectangleShape rectp;

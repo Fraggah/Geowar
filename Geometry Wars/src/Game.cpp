@@ -245,13 +245,13 @@ void Game::init(const std::string& config)
 	m_hiscoreText.setFont(m_font);
 	m_hiscoreText.setFillColor(sf::Color::Black);
 	m_hiscoreText.setCharacterSize(30);
-	m_hiscoreText.setPosition(sf::Vector2f(820, 800));
+	m_hiscoreText.setPosition(sf::Vector2f(840, 800));
 
 	m_press.setFont(m_font);
 	m_press.setString(m_pressi);
 	m_press.setFillColor(sf::Color::Black);
 	m_press.setCharacterSize(50);
-	m_press.setPosition(sf::Vector2f(630, 650));
+	m_press.setPosition(sf::Vector2f(640, 650));
 
 	m_scoreText.setPosition(10, 7);
 	m_scoreText.setString(m_scorei);
@@ -362,19 +362,19 @@ void Game::sUserInput()
 				{
 					m_paused ? setPaused(false) : setPaused(true);
 				}
-				else if (event.key.code == sf::Keyboard::A) { m_player->cInput->left = true; }
-				else if (event.key.code == sf::Keyboard::D) { m_player->cInput->right = true; }
-				else if (event.key.code == sf::Keyboard::W) { m_player->cInput->up = true; }
-				else if (event.key.code == sf::Keyboard::S) { m_player->cInput->down = true; }
+				else if (event.key.code == sf::Keyboard::A && !m_menu && !m_gameOver) { m_player->cInput->left = true; }
+				else if (event.key.code == sf::Keyboard::D && !m_menu && !m_gameOver) { m_player->cInput->right = true; }
+				else if (event.key.code == sf::Keyboard::W && !m_menu && !m_gameOver) { m_player->cInput->up = true; }
+				else if (event.key.code == sf::Keyboard::S && !m_menu && !m_gameOver) { m_player->cInput->down = true; }
 
 				break;
 			}
 			case sf::Event::KeyReleased:
 			{
-				if (event.key.code == sf::Keyboard::A) { m_player->cInput->left = false; }
-				else if (event.key.code == sf::Keyboard::D) { m_player->cInput->right = false; }
-				else if (event.key.code == sf::Keyboard::W) { m_player->cInput->up = false; }
-				else if (event.key.code == sf::Keyboard::S) { m_player->cInput->down = false; }
+				if (event.key.code == sf::Keyboard::A && !m_menu && !m_gameOver) { m_player->cInput->left = false; }
+				else if (event.key.code == sf::Keyboard::D && !m_menu && !m_gameOver) { m_player->cInput->right = false; }
+				else if (event.key.code == sf::Keyboard::W && !m_menu && !m_gameOver) { m_player->cInput->up = false; }
+				else if (event.key.code == sf::Keyboard::S && !m_menu && !m_gameOver) { m_player->cInput->down = false; }
 				break;
 			}
 			case sf::Event::MouseButtonPressed:

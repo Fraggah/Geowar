@@ -44,3 +44,11 @@ const EntityVec& EntityManager::getEntities(const std::string& tag)
 {
 	return m_entityMap[tag];
 }
+
+void EntityManager::gameOver() 
+{
+	m_entities.clear();
+	m_toAdd.clear();
+	m_entityMap.clear();
+}
+

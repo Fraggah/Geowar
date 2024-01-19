@@ -10,18 +10,22 @@ void Game::run()
 {
 	while (m_running)
 	{
-		m_manager.update();
-		if (!m_menu)
+		if(!m_gameOver)
 		{
-			if (!m_paused)
+			if (!m_menu)
 			{
-				sLifeSpan();
-				sSpawner();
-				sMovement();
-				sCollision();
+				if (!m_paused)
+				{
+					sLifeSpan();
+					sSpawner();
+					sMovement();
+					sCollision();
+				}
 			}
 		}
+		m_manager.update();
 
+		sInterface();
 		sUserInput();
 		sRender();
 
@@ -222,41 +226,62 @@ void Game::init(const std::string& config)
 		}
 	}
 
+	m_window.setMouseCursorVisible(false);
 
-	spawnPlayer();
-
-	std::string title = "GEOWARS";
+	m_hiscore = loadHiscore();
+	
 	m_title.setFont(m_font);
-	m_title.setString(title);
+	m_title.setString(m_titlei);
 	m_title.setCharacterSize(200);
 	m_title.setFillColor(sf::Color::Black);
-	m_title.setPosition(sf::Vector2f((m_window.getSize().x / 2) - (m_title.getGlobalBounds().width / 2) - 20, (m_window.getSize().y / 2) - (m_title.getGlobalBounds().height / 2) - 50));
+	m_title.setPosition(sf::Vector2f((m_window.getSize().x / 2) - (m_title.getGlobalBounds().width / 2) - 20, (m_window.getSize().y / 2) - (m_title.getGlobalBounds().height / 2) - 200));
 
-	std::string scorei = "SCORE ";
-	scorei += std::to_string(m_score);
+	m_overText.setFont(m_font);
+	m_overText.setString(m_goi);
+	m_overText.setCharacterSize(200);
+	m_overText.setFillColor(sf::Color::Black);
+	m_overText.setPosition(sf::Vector2f((m_window.getSize().x / 2) - (m_title.getGlobalBounds().width / 2) - 140, (m_window.getSize().y / 2) - (m_title.getGlobalBounds().height / 2) - 80));
+
+	m_hiscoreText.setFont(m_font);
+	m_hiscoreText.setFillColor(sf::Color::Black);
+	m_hiscoreText.setCharacterSize(30);
+	m_hiscoreText.setPosition(sf::Vector2f(820, 800));
+
+	m_press.setFont(m_font);
+	m_press.setString(m_pressi);
+	m_press.setFillColor(sf::Color::Black);
+	m_press.setCharacterSize(50);
+	m_press.setPosition(sf::Vector2f(630, 650));
+
 	m_scoreText.setPosition(10, 7);
-	m_scoreText.setString(scorei);
+	m_scoreText.setString(m_scorei);
 
-	rect.setSize(sf::Vector2f(1920, 40));
-	rect.setFillColor(sf::Color(20, 20, 20));
-	rectp.setFillColor(sf::Color(0, 0, 0, 200));
-	rectp.setSize(sf::Vector2f(1920,1080));
+	m_rect.setSize(sf::Vector2f(1920, 40));
+	m_rect.setFillColor(sf::Color(20, 20, 20));
+	m_rectp.setFillColor(sf::Color(0, 0, 0, 200));
+	m_rectp.setSize(sf::Vector2f(1920,1080));
+	m_rectb.setFillColor(sf::Color(100, 100, 100));
+	m_rectb.setSize(sf::Vector2f(1920, 1080));
+	m_point.setRadius(8);
+	m_point.setFillColor(sf::Color(0, 0, 0, 0));
+	m_point.setOutlineColor(sf::Color(100, 0, 0));
+	m_point.setOutlineThickness(4);
 
-	std::string pausei = "PAUSE";
+	m_ammoText.setFont(m_font);
+	m_ammoText.setFillColor(sf::Color(130, 130, 130));
+	m_ammoText.setCharacterSize(24);
+	m_ammoText.setPosition(sf::Vector2f(870, 7));
+
 	m_pauseText.setFont(m_font);
-	m_pauseText.setString(pausei);
+	m_pauseText.setString(m_pausei);
 	m_pauseText.setCharacterSize(200);
 	m_pauseText.setFillColor(sf::Color::Black);
 	m_pauseText.setPosition(sf::Vector2f((m_window.getSize().x / 2) - (m_pauseText.getGlobalBounds().width / 2) -20, (m_window.getSize().y / 2) - (m_pauseText.getGlobalBounds().height / 2) - 50));
 
-
-	std::string lifei = "LIFES x";
-	lifei += std::to_string(m_lifes); 
 	m_lifeText.setFont(m_font);
 	m_lifeText.setPosition(1790, 7);
 	m_lifeText.setFillColor(sf::Color(130,130,130));
 	m_lifeText.setCharacterSize(24);
-	m_lifeText.setString(lifei);
 }
 
 void Game::setPaused(bool paused)
@@ -315,9 +340,18 @@ void Game::sUserInput()
 			}
 			case sf::Event::KeyPressed:
 			{
-				if (event.key.code == sf::Keyboard::Enter && m_menu == true)
+				if (event.key.code == sf::Keyboard::Enter)
 				{
-					m_menu = false;
+					if (m_menu == true && m_gameOver == false)
+					{
+						m_menu = false;
+						spawnPlayer();
+					}
+					if (m_gameOver == true && m_menu == false)
+					{
+						m_gameOver = false;
+						m_menu = true;
+					}
 					
 				}
 				if (event.key.code == sf::Keyboard::Escape)
@@ -345,25 +379,26 @@ void Game::sUserInput()
 			}
 			case sf::Event::MouseButtonPressed:
 			{
-				if (event.mouseButton.button == sf::Mouse::Left)
+				if (event.mouseButton.button == sf::Mouse::Left  && !m_menu && !m_gameOver)
 				{
 					if (m_player->cInput->leftMouse == false)
 					{
 						m_player->cInput->leftMouse = true;
 					}
 				}
-				if(event.mouseButton.button == sf::Mouse::Right)
+				if(event.mouseButton.button == sf::Mouse::Right && !m_menu && !m_gameOver)
 				{
-					if (m_player->cInput->rightMouse == false)
+					if (m_player->cInput->rightMouse == false && m_ammo >= 10)
 					{
 						m_player->cInput->rightMouse = true;
+						m_ammo-=5;
 					}
 				}
 				break;
 			}
 			case sf::Event::MouseButtonReleased:
 			{
-				if (event.mouseButton.button == sf::Mouse::Left)
+				if (event.mouseButton.button == sf::Mouse::Left && !m_menu && !m_gameOver)
 				{
 					m_player->cInput->leftMouse = false;
 				}
@@ -407,16 +442,18 @@ void Game::sLifeSpan()
 
 void Game::sRender()
 {
-	m_window.clear(sf::Color(100,100,100));
-
+	m_window.clear();
+	m_window.draw(m_rectb);
 	if (m_menu)
 	{
 		m_window.draw(m_title);
+		m_window.draw(m_press);
+		m_window.draw(m_hiscoreText);
 	}
 
 	if (!m_menu)
 	{
-		m_window.draw(rect);
+		m_window.draw(m_rect);
 
 		for (auto e : m_manager.getEntities())
 		{
@@ -425,13 +462,21 @@ void Game::sRender()
 		}
 		if (m_paused)
 		{
-			m_window.draw(rectp);
+			m_window.draw(m_rectp);
 			m_window.draw(m_pauseText);
 		}
 
 		m_window.draw(m_scoreText);
 		m_window.draw(m_lifeText);
+		m_window.draw(m_ammoText);
+		m_window.draw(m_point);
+
+		if (m_gameOver)
+		{
+			m_window.draw(m_overText);
+		}
 	}	
+
 	m_window.display();
 }
 
@@ -457,6 +502,26 @@ void Game::sSpawner()
 
 void Game::sCollision()
 {
+	if (m_clock.getElapsedTime() < m_timer)
+	{
+		m_player->cShape->circle.setFillColor(sf::Color(255,255,255,50));
+		m_player->cShape->circle.setOutlineColor(sf::Color(255, 255, 255, 50));
+	}
+	else
+	{
+		m_player->cShape->circle.setFillColor(sf::Color(m_playerConfig.FR, m_playerConfig.FG, m_playerConfig.FB, 255));
+		m_player->cShape->circle.setOutlineColor(sf::Color(m_playerConfig.OR, m_playerConfig.OG, m_playerConfig.OB, 255));
+	}
+
+	if (m_clock.getElapsedTime() < sf::seconds(0.1))
+	{
+		m_rectb.setFillColor(sf::Color(80, 0, 0));
+	}
+	else
+	{
+		m_rectb.setFillColor(sf::Color(100, 100, 100));
+	}
+
 	Vec2 middleWindowPos(m_window.getSize().x * 0.5, m_window.getSize().y * 0.5);
 	for (auto player : m_manager.getEntities("player"))
 	{
@@ -467,14 +532,14 @@ void Game::sCollision()
 			double collisionRadiusSQ = (player->cCollision->radius + enemy->cCollision->radius) * (player->cCollision->radius + enemy->cCollision->radius);
 			double distSQ = (diff.x * diff.x) + (diff.y * diff.y);
 
-			if (distSQ < collisionRadiusSQ)
+			if (distSQ < collisionRadiusSQ && m_clock.getElapsedTime() > m_timer)
 			{
 				if (player->isActive())
 				{
 					enemy->destroy();
 					player->cTransform->pos = (middleWindowPos);
 					m_lifes--;
-					m_lifeText.setString("LIFES x" + std::to_string(m_lifes));
+					m_clock.restart();
 				}
 			}
 		}
@@ -486,14 +551,14 @@ void Game::sCollision()
 			double collisionRadiusSQ( (player->cCollision->radius + enemy->cCollision->radius) * (player->cCollision->radius + enemy->cCollision->radius) );
 			double distSQ( (diff.x * diff.x) + (diff.y * diff.y) );
 		
-			if (distSQ < collisionRadiusSQ)
+			if (distSQ < collisionRadiusSQ && m_clock.getElapsedTime() > m_timer)
 			{
 				if (player->isActive())
 				{
 					enemy->destroy();
 					player->cTransform->pos = (middleWindowPos);				
 					m_lifes--;
-					m_lifeText.setString("LIFES x" + std::to_string(m_lifes));
+					m_clock.restart();
 				}
 			}
 		}
@@ -511,12 +576,11 @@ void Game::sCollision()
 			if (distSQ < collisionRadiusSQ)
 			{
 				m_score += enemy->cScore->score;
-				m_scoreText.setString("SCORE "+std::to_string(m_score));
 
 				spawnSmallEnemies(enemy);
 				bullet->destroy();
 				enemy->destroy();
-
+				m_ammo++;
 				break;
 			}
 		}
@@ -531,11 +595,10 @@ void Game::sCollision()
 			if (distSQ < collisionRadiusSQ)
 			{
 				m_score += enemy->cScore->score;
-				m_scoreText.setString("SCORE "+std::to_string(m_score));
 
 				bullet->destroy();
 				enemy->destroy();
-
+				m_ammo++;
 				break;
 			}
 		}
@@ -601,7 +664,7 @@ void Game::spawnEnemy()
 		static_cast<double>(minPosY + (rand() % (maxPosY - minPosY + 1)))
 	};
 
-	while (std::sqrt(std::pow(randPos.x - m_player->cTransform->pos.x*3, 2.0) + std::pow(randPos.y - m_player->cTransform->pos.y*3, 2.0)) < 2.0 * m_enemyConfig.CR)
+	while (std::sqrt(std::pow(randPos.x - m_player->cTransform->pos.x, 2.0) + std::pow(randPos.y - m_player->cTransform->pos.y, 2.0)) < 2.0 * m_enemyConfig.CR * 3)
 	{
 		randPos = Vec2
 		{
@@ -610,10 +673,8 @@ void Game::spawnEnemy()
 		};
 	}
 
-	int randSpeed
-	{ 
-		static_cast<int>(m_enemyConfig.SMIN + rand() % static_cast<int>((m_enemyConfig.SMAX - m_enemyConfig.SMIN + 1)))
-	};
+	int randSpeed = static_cast<int>(m_enemyConfig.SMIN + rand() % static_cast<int>((m_enemyConfig.SMAX - m_enemyConfig.SMIN + 1)));
+	
 	while (randSpeed == 0)
 	{
 		randSpeed = m_enemyConfig.SMIN + rand() % static_cast<int>((m_enemyConfig.SMAX - m_enemyConfig.SMIN + 1));
@@ -714,19 +775,106 @@ void Game::spawnSpecialWeapon(std::shared_ptr<Entity> entity)
 		e->cCollision = std::make_shared<CCollision>(m_bulletConfig.CR);
 		e->cLifespan = std::make_shared<CLifeSpan>(m_bulletConfig.L);
 
-		Vec2 normalizedPos( Vec2::normalize(m_player->cTransform->pos) );
+		Vec2 normalizedPos(Vec2::normalize(m_player->cTransform->pos));
 
 		double radians = angle * PI / 180.0;
 
 		Vec2 velocity(std::cos(radians) * normalizedPos.x + std::sin(radians) * normalizedPos.y,
-					  std::sin(radians) * normalizedPos.x - std::cos(radians) * normalizedPos.y);
+			std::sin(radians) * normalizedPos.x - std::cos(radians) * normalizedPos.y);
 
 		double L = velocity.lenght();
-		Vec2 normalizedVelocity( velocity.x / L,velocity.y / L );
-		Vec2 newVelocity( normalizedVelocity.x * m_bulletConfig.S, normalizedVelocity.y * m_bulletConfig.S );
+		Vec2 normalizedVelocity(velocity.x / L, velocity.y / L);
+		Vec2 newVelocity(normalizedVelocity.x * m_bulletConfig.S, normalizedVelocity.y * m_bulletConfig.S);
 
 		e->cTransform = std::make_shared<CTransform>(m_player->cTransform->pos, newVelocity, 0);
 
 		angle += 360 / m_bulletConfig.SB;
+
 	}
+}
+
+void Game::sInterface() 
+{
+	m_ammoText.setString(m_ammoi + std::to_string(m_ammo/10));
+	m_lifeText.setString(m_lifei + std::to_string(m_lifes));
+	m_scoreText.setString(m_scorei + std::to_string(m_score));
+	m_hiscoreText.setString(m_hiscorei + std::to_string(m_hiscore));
+
+	if (m_lifes == 0)
+	{
+		gameOver();
+	}
+	if (m_gameOver)
+	{
+		m_rectb.setFillColor(sf::Color(100, 0, 0));
+	}
+	else if (!m_gameOver && m_clock.getElapsedTime() > sf::seconds(0.1))
+	{
+		m_rectb.setFillColor(sf::Color(100, 100, 100));
+	}
+	if (m_currentFrame > 300)
+	{
+		m_enemyConfig.SI -= 1;
+		m_currentFrame = 0;
+		m_lastEnemySpawnTime = 0;
+	}
+	m_point.setPosition(sf::Vector2f(sf::Mouse::getPosition(m_window)));
+}
+
+void Game::gameOver()
+{
+	saveHiscore(m_score);
+	m_hiscore = loadHiscore();
+
+	m_gameOver = true;
+	m_manager.gameOver();
+	m_currentFrame = 0;
+	m_lastEnemySpawnTime = 0;
+	m_lifes = 3;
+	m_score = 0;
+	m_ammo = 0;
+}
+
+void Game::saveHiscore(int hiscore) {
+	std::ifstream readfile("Debug/hiscore.txt");
+	int existingHiscore = 0;
+
+	if (readfile.is_open()) {
+		readfile >> existingHiscore;
+		readfile.close();
+
+		if (hiscore > existingHiscore) {
+			std::ofstream savefile("Debug/hiscore.txt");
+			if (savefile.is_open()) {
+				savefile << hiscore;
+				savefile.close();
+				printf("New Hiscore saved: %d\n", hiscore);
+			}
+			else {
+				printf("Failed to save Hiscore\n");
+			}
+		}
+		else {
+			printf("Current Hiscore (%d) is higher than or equal to the new score (%d), not saving.\n", existingHiscore, hiscore);
+		}
+	}
+	else {
+		printf("Failed to read Hiscore file\n");
+	}
+}
+
+int Game::loadHiscore() {
+	std::ifstream savefile("Debug/hiscore.txt");
+	int hiscore = 0;
+
+	if (savefile.is_open()) {
+		savefile >> hiscore;
+		savefile.close();
+		printf("Hiscore loaded");
+	}
+	else {
+		printf("Failed to save Hiscore");
+	}
+
+	return hiscore;
 }

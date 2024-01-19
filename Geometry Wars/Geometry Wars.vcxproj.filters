@@ -30,6 +30,9 @@
     <ClCompile Include="src\Vec2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CComponents.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Game.h">
@@ -41,34 +44,13 @@
     <ClInclude Include="src\Vec2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\CCollision.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\CTransform.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\CScore.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\EntityManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\CInput.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\CLifeSpan.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\CShape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ConfigSpecification.txt">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Common.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Math.h">
+    <ClInclude Include="src\CComponents.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

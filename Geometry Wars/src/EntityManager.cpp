@@ -19,10 +19,8 @@ void EntityManager::update()
 		m_entityMap[e->tag()].push_back(e);
 	}
 
-	//Remove dead entities from the vector of all entities
 	removeDeadEntities(m_entities);
 
-	//Remove dead entities from each vector in the entity map
 	for (auto& [tag, entityVec] : m_entityMap)
 	{
 		removeDeadEntities(entityVec);

@@ -1,24 +1,24 @@
 ﻿  Game.cpp
-D:\Docs\Documents\Silvio\Estudiando Hard\Memorial University - C++ Game Programming\Assignment 2\Geometry-Wars\Geometry Wars\src\Game.cpp(32,12): warning C4244: 'argumento': conversión de 'time_t' a 'unsigned int'; posible pérdida de datos
-D:\Docs\Documents\Silvio\Estudiando Hard\Memorial University - C++ Game Programming\Assignment 2\Geometry-Wars\Geometry Wars\src\Game.cpp(89,56): warning C4244: 'argumento': conversión de 'T' a 'sf::Uint8'; posible pérdida de datos
+D:\Docs\Documents\Silvio\Estudiando Hard\Memorial University - C++ Game Programming\Assignment 2\Geometry-Wars\Geometry Wars\src\Game.cpp(31,12): warning C4244: 'argumento': conversión de 'time_t' a 'unsigned int'; posible pérdida de datos
+D:\Docs\Documents\Silvio\Estudiando Hard\Memorial University - C++ Game Programming\Assignment 2\Geometry-Wars\Geometry Wars\src\Game.cpp(88,56): warning C4244: 'argumento': conversión de 'T' a 'sf::Uint8'; posible pérdida de datos
           with
           [
               T=sf::Uint16
           ]
-D:\Docs\Documents\Silvio\Estudiando Hard\Memorial University - C++ Game Programming\Assignment 2\Geometry-Wars\Geometry Wars\src\Game.cpp(89,49): warning C4244: 'argumento': conversión de 'T' a 'sf::Uint8'; posible pérdida de datos
+D:\Docs\Documents\Silvio\Estudiando Hard\Memorial University - C++ Game Programming\Assignment 2\Geometry-Wars\Geometry Wars\src\Game.cpp(88,49): warning C4244: 'argumento': conversión de 'T' a 'sf::Uint8'; posible pérdida de datos
           with
           [
               T=sf::Uint16
           ]
-D:\Docs\Documents\Silvio\Estudiando Hard\Memorial University - C++ Game Programming\Assignment 2\Geometry-Wars\Geometry Wars\src\Game.cpp(89,42): warning C4244: 'argumento': conversión de 'T' a 'sf::Uint8'; posible pérdida de datos
+D:\Docs\Documents\Silvio\Estudiando Hard\Memorial University - C++ Game Programming\Assignment 2\Geometry-Wars\Geometry Wars\src\Game.cpp(88,42): warning C4244: 'argumento': conversión de 'T' a 'sf::Uint8'; posible pérdida de datos
           with
           [
               T=sf::Uint16
           ]
-D:\Docs\Documents\Silvio\Estudiando Hard\Memorial University - C++ Game Programming\Assignment 2\Geometry-Wars\Geometry Wars\src\Game.cpp(376,73): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
-D:\Docs\Documents\Silvio\Estudiando Hard\Memorial University - C++ Game Programming\Assignment 2\Geometry-Wars\Geometry Wars\src\Game.cpp(376,51): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
-D:\Docs\Documents\Silvio\Estudiando Hard\Memorial University - C++ Game Programming\Assignment 2\Geometry-Wars\Geometry Wars\src\Game.cpp(566,34): warning C4244: '=': conversión de 'float' a 'int'; posible pérdida de datos
-D:\Docs\Documents\Silvio\Estudiando Hard\Memorial University - C++ Game Programming\Assignment 2\Geometry-Wars\Geometry Wars\src\Game.cpp(624,42): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+D:\Docs\Documents\Silvio\Estudiando Hard\Memorial University - C++ Game Programming\Assignment 2\Geometry-Wars\Geometry Wars\src\Game.cpp(398,73): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+D:\Docs\Documents\Silvio\Estudiando Hard\Memorial University - C++ Game Programming\Assignment 2\Geometry-Wars\Geometry Wars\src\Game.cpp(398,51): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+D:\Docs\Documents\Silvio\Estudiando Hard\Memorial University - C++ Game Programming\Assignment 2\Geometry-Wars\Geometry Wars\src\Game.cpp(588,34): warning C4244: '=': conversión de 'float' a 'int'; posible pérdida de datos
+D:\Docs\Documents\Silvio\Estudiando Hard\Memorial University - C++ Game Programming\Assignment 2\Geometry-Wars\Geometry Wars\src\Game.cpp(643,42): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.36.32532\include\xutility(251,71): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.36.32532\include\xutility(261,14): message : Vea la referencia a la creación de una instancia de la función plantilla "_Ty *std::construct_at<_Ty,int&,int&,sf::Color,sf::Color,int&,0x0>(_Ty *const ,int &,int &,sf::Color &&,sf::Color &&,int &) noexcept(<expr>)" que se está compilando
           with
@@ -35,7 +35,7 @@ C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.36.3253
           [
               _Ty=sf::Color
           ]
-D:\Docs\Documents\Silvio\Estudiando Hard\Memorial University - C++ Game Programming\Assignment 2\Geometry-Wars\Geometry Wars\src\Game.cpp(525,24): message : Vea la referencia a la creación de una instancia de la función plantilla "std::shared_ptr<CShape> std::make_shared<CShape,int&,int&,sf::Color,sf::Color,int&>(int &,int &,sf::Color &&,sf::Color &&,int &)" que se está compilando
+D:\Docs\Documents\Silvio\Estudiando Hard\Memorial University - C++ Game Programming\Assignment 2\Geometry-Wars\Geometry Wars\src\Game.cpp(545,24): message : Vea la referencia a la creación de una instancia de la función plantilla "std::shared_ptr<CShape> std::make_shared<CShape,int&,int&,sf::Color,sf::Color,int&>(int &,int &,sf::Color &&,sf::Color &&,int &)" que se está compilando
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.36.32532\include\xutility(265,77): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.36.32532\include\xutility(251,71): warning C4244: 'argumento': conversión de '_Ty' a 'float'; posible pérdida de datos
           with
@@ -57,7 +57,7 @@ C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.36.3253
           [
               _Ty=int
           ]
-D:\Docs\Documents\Silvio\Estudiando Hard\Memorial University - C++ Game Programming\Assignment 2\Geometry-Wars\Geometry Wars\src\Game.cpp(628,24): message : Vea la referencia a la creación de una instancia de la función plantilla "std::shared_ptr<CTransform> std::make_shared<CTransform,Vec2&,Vec2&,int>(Vec2 &,Vec2 &,int &&)" que se está compilando
+D:\Docs\Documents\Silvio\Estudiando Hard\Memorial University - C++ Game Programming\Assignment 2\Geometry-Wars\Geometry Wars\src\Game.cpp(647,24): message : Vea la referencia a la creación de una instancia de la función plantilla "std::shared_ptr<CTransform> std::make_shared<CTransform,Vec2&,Vec2&,int>(Vec2 &,Vec2 &,int &&)" que se está compilando
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.36.32532\include\xutility(265,77): warning C4244: 'argumento': conversión de '_Ty' a 'float'; posible pérdida de datos
           with
           [

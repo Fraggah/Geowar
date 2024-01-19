@@ -1,13 +1,7 @@
 #pragma once
 
-#include "Common.h"
+#include "CComponents.h"
 
-#include "CCollision.h"
-#include "CScore.h"
-#include "CTransform.h"
-#include "CInput.h"
-#include "CLifeSpan.h"
-#include "CShape.h"
 
 class Entity
 {
@@ -27,6 +21,7 @@ public:
 	std::shared_ptr<CInput>		cInput;
 	std::shared_ptr<CLifeSpan>	cLifespan;
 	std::shared_ptr<CShape>		cShape;
+	std::shared_ptr<CLife>		cLife;
 
 public:
 	void destroy();

@@ -1,6 +1,5 @@
 #include "Game.h"
 
-#include "Common.h"
 
 Game::Game(const std::string& configFile)
 {
@@ -35,7 +34,7 @@ void Game::init(const std::string& config)
 
 	if (!input.is_open())
 	{
-		std::cout << "Failed to open: " << config << '\n';
+		printf("failed to open");
 		exit(-1);
 	}
 
@@ -57,13 +56,13 @@ void Game::init(const std::string& config)
 			input >> fullScreen;
 			if (fullScreen == 0)
 			{
-				m_window.create(sf::VideoMode(width, height), "Geometry Wars", sf::Style::Close);
+				m_window.create(sf::VideoMode(width, height), "Geowars", sf::Style::Close);
 				m_window.setFramerateLimit(frameLimit);
 			}
 			else if (fullScreen == 1)
 			{
 				auto fullscreenMode{ sf::VideoMode::getFullscreenModes() };
-				m_window.create(fullscreenMode[0], "Geometry Wars", sf::Style::Fullscreen);
+				m_window.create(fullscreenMode[0], "Geowars", sf::Style::Fullscreen);
 				m_window.setFramerateLimit(frameLimit);
 			}
 		}
@@ -73,7 +72,7 @@ void Game::init(const std::string& config)
 			input >> path;
 			if (!m_font.loadFromFile(path))
 			{
-				std::cerr << "Failed to load font. Filepath: " << path;
+				printf ("Failed to load font.");
 			}
 
 			m_scoreText.setFont(m_font);
@@ -219,11 +218,27 @@ void Game::init(const std::string& config)
 			m_bulletConfig.SB = specialBulletAmount;
 		}
 	}
-
-	m_scoreText.setPosition(0, 0);
-	m_scoreText.setString(std::to_string(m_score));
+	std::string scorei = "SCORE ";
+	scorei += std::to_string(m_score);
+	m_scoreText.setPosition(10, 7);
+	m_scoreText.setString(scorei);
 
 	spawnPlayer();
+
+	rect.setSize(sf::Vector2f(1920, 40));
+	rect.setFillColor(sf::Color(20, 20, 20));
+
+	rectp.setFillColor(sf::Color(0, 0, 0, 200));
+	rectp.setSize(sf::Vector2f(1920,1080));
+
+
+	std::string lifei = "LIFES x";
+	lifei += std::to_string(m_lifes); 
+	m_lifeText.setFont(m_font);
+	m_lifeText.setPosition(1800, 7);
+	m_lifeText.setFillColor(sf::Color::White);
+	m_lifeText.setCharacterSize(24);
+	m_lifeText.setString(lifei);
 }
 
 void Game::setPaused(bool paused)
@@ -242,7 +257,7 @@ void Game::sMovement()
 	{
 		playerVelocity.x += m_playerConfig.S;
 	}
-	if (m_player->cInput->up && (m_player->cTransform->pos.y - m_player->cCollision->radius) > 0)
+	if (m_player->cInput->up && (m_player->cTransform->pos.y - m_player->cCollision->radius) > 55)
 	{
 		playerVelocity.y -= m_playerConfig.S;
 	}
@@ -350,14 +365,14 @@ void Game::sLifeSpan()
 		}
 		if (e->isActive() && e->cLifespan->remaining > 0)
 		{
-			float alphaMultiplier{ static_cast<float>(e->cLifespan->remaining) / static_cast<float>(e->cLifespan->total) };
+			float alphaMultiplier = static_cast<float>(e->cLifespan->remaining) / static_cast<float>(e->cLifespan->total);
 
-			auto fillColor{ e->cShape->circle.getFillColor() };
-			sf::Color newFillColor{ fillColor.r,fillColor.g,fillColor.b, static_cast<sf::Uint8>( 255 * alphaMultiplier) };
+			auto fillColor = e->cShape->circle.getFillColor();
+			sf::Color newFillColor (fillColor.r,fillColor.g,fillColor.b, static_cast<sf::Uint8>( 255 * alphaMultiplier));
 			e->cShape->circle.setFillColor(newFillColor);
 
-			auto outlineColor{ e->cShape->circle.getOutlineColor() };
-			sf::Color newOutlineColor{ outlineColor.r,outlineColor.g,outlineColor.b, static_cast<sf::Uint8>(255 * alphaMultiplier) };
+			auto outlineColor = e->cShape->circle.getOutlineColor();
+			sf::Color newOutlineColor (outlineColor.r,outlineColor.g,outlineColor.b, static_cast<sf::Uint8>(255 * alphaMultiplier));
 			e->cShape->circle.setOutlineColor(newOutlineColor);
 		}
 		else if (e->cLifespan->remaining <= 0)
@@ -371,12 +386,20 @@ void Game::sRender()
 {
 	m_window.clear(sf::Color(100,100,100));
 
+	m_window.draw(rect);
+
+	if (m_paused)
+	{
+		m_window.draw(rectp);
+	}
+
 	for (auto e : m_manager.getEntities())
 	{
 		e->cShape->circle.setPosition(e->cTransform->pos.x, e->cTransform->pos.y);
 		m_window.draw(e->cShape->circle);
 	}
 	m_window.draw(m_scoreText);
+	m_window.draw(m_lifeText);
 	
 	m_window.display();
 }
@@ -389,7 +412,7 @@ void Game::sSpawner()
 	}
 	if (m_player->cInput->leftMouse == true)
 	{
-		Vec2 mousePos{ static_cast<double>(sf::Mouse::getPosition(m_window).x), static_cast<double>(sf::Mouse::getPosition(m_window).y) };
+		Vec2 mousePos( static_cast<double>(sf::Mouse::getPosition(m_window).x), static_cast<double>(sf::Mouse::getPosition(m_window).y) );
 		spawnBullet(m_player, mousePos);
 		m_player->cInput->leftMouse = false;
 	}
@@ -403,6 +426,7 @@ void Game::sSpawner()
 
 void Game::sCollision()
 {
+	Vec2 middleWindowPos(m_window.getSize().x * 0.5, m_window.getSize().y * 0.5);
 	for (auto player : m_manager.getEntities("player"))
 	{
 		for (auto enemy : m_manager.getEntities("enemy"))
@@ -416,33 +440,29 @@ void Game::sCollision()
 			{
 				if (player->isActive())
 				{
-					m_score = 0;
-					m_scoreText.setString(std::to_string(m_score));
-
 					enemy->destroy();
-					player->destroy();
-					spawnPlayer();
+					player->cTransform->pos = (middleWindowPos);
+					m_lifes--;
+					m_lifeText.setString("LIFES x" + std::to_string(m_lifes));
 				}
 			}
 		}
 
 		for (auto enemy : m_manager.getEntities("smallEnemy"))
 		{	
-			Vec2 diff{ enemy->cTransform->pos.x - player->cTransform->pos.x , enemy->cTransform->pos.y - player->cTransform->pos.y };
+			Vec2 diff( enemy->cTransform->pos.x - player->cTransform->pos.x , enemy->cTransform->pos.y - player->cTransform->pos.y );
 		
-			double collisionRadiusSQ{ (player->cCollision->radius + enemy->cCollision->radius) * (player->cCollision->radius + enemy->cCollision->radius) };
-			double distSQ{ (diff.x * diff.x) + (diff.y * diff.y) };
+			double collisionRadiusSQ( (player->cCollision->radius + enemy->cCollision->radius) * (player->cCollision->radius + enemy->cCollision->radius) );
+			double distSQ( (diff.x * diff.x) + (diff.y * diff.y) );
 		
 			if (distSQ < collisionRadiusSQ)
 			{
 				if (player->isActive())
 				{
-					m_score /= 2;
-					m_scoreText.setString(std::to_string(m_score));
-
-					player->destroy();
 					enemy->destroy();
-					spawnPlayer();
+					player->cTransform->pos = (middleWindowPos);				
+					m_lifes--;
+					m_lifeText.setString("LIFES x" + std::to_string(m_lifes));
 				}
 			}
 		}
@@ -460,7 +480,7 @@ void Game::sCollision()
 			if (distSQ < collisionRadiusSQ)
 			{
 				m_score += enemy->cScore->score;
-				m_scoreText.setString(std::to_string(m_score));
+				m_scoreText.setString("SCORE "+std::to_string(m_score));
 
 				spawnSmallEnemies(enemy);
 				bullet->destroy();
@@ -474,13 +494,13 @@ void Game::sCollision()
 		{
 			Vec2 diff( enemy->cTransform->pos.x - bullet->cTransform->pos.x , enemy->cTransform->pos.y - bullet->cTransform->pos.y );
 
-			double collisionRadiusSQ{ (bullet->cCollision->radius + enemy->cCollision->radius) * (bullet->cCollision->radius + enemy->cCollision->radius) };
-			double distSQ{ (diff.x * diff.x) + (diff.y * diff.y) };
+			double collisionRadiusSQ = (bullet->cCollision->radius + enemy->cCollision->radius) * (bullet->cCollision->radius + enemy->cCollision->radius);
+			double distSQ = (diff.x * diff.x) + (diff.y * diff.y);
 
 			if (distSQ < collisionRadiusSQ)
 			{
 				m_score += enemy->cScore->score;
-				m_scoreText.setString(std::to_string(m_score));
+				m_scoreText.setString("SCORE "+std::to_string(m_score));
 
 				bullet->destroy();
 				enemy->destroy();
@@ -506,7 +526,7 @@ void Game::sCollision()
 			{
 				e->cTransform->velocity.y *= -1;
 			}
-			else if (e->cTransform->pos.y - e->cCollision->radius < 0)
+			else if (e->cTransform->pos.y - e->cCollision->radius < 40)
 			{
 				e->cTransform->velocity.y *= -1;
 			}
@@ -529,6 +549,8 @@ void Game::spawnPlayer()
 
 	player->cInput = std::make_shared<CInput>();
 
+	player->cLife = std::make_shared<CLife>(3);
+
 	m_player = player;
 }
 
@@ -539,7 +561,7 @@ void Game::spawnEnemy()
 	int minPosX = m_enemyConfig.CR;
 	int maxPosX = static_cast<int>(m_window.getSize().x - m_enemyConfig.CR);
 	
-	int minPosY = m_enemyConfig.CR;
+	int minPosY = m_enemyConfig.CR + 40;
 	int maxPosY = static_cast<int>(m_window.getSize().y - m_enemyConfig.CR);
 	
 	Vec2 randPos
@@ -602,10 +624,7 @@ void Game::spawnSmallEnemies(std::shared_ptr<Entity> parent)
 	float smallEnemyRadius = parent->cShape->circle.getRadius() * 0.5f;
 	float smallEnemyCollisionRadius = parent->cCollision->radius * 0.5f;
 
-	float angle{ 0 };
-
-	std::cout << ParentPos;
-	std::cout << normalizedParentPos;
+	float angle = 0;
 
 	for (size_t i{ 0 }; i < vertices; ++i)
 	{
@@ -616,7 +635,7 @@ void Game::spawnSmallEnemies(std::shared_ptr<Entity> parent)
 		e->cCollision = std::make_shared<CCollision>(smallEnemyCollisionRadius);
 		e->cLifespan = std::make_shared<CLifeSpan>(m_enemyConfig.L);
 
-		double radians = angle * Math::PI / 180.0;
+		double radians = angle * PI / 180.0;
 
 		Vec2 velocity(std::cos(radians) * normalizedParentPos.x + std::sin(radians) * normalizedParentPos.y,
 					  std::sin(radians) * normalizedParentPos.x - std::cos(radians) * normalizedParentPos.y);
@@ -666,7 +685,7 @@ void Game::spawnSpecialWeapon(std::shared_ptr<Entity> entity)
 
 		Vec2 normalizedPos( Vec2::normalize(m_player->cTransform->pos) );
 
-		double radians{ angle * Math::PI / 180.0 };
+		double radians = angle * PI / 180.0;
 
 		Vec2 velocity(std::cos(radians) * normalizedPos.x + std::sin(radians) * normalizedPos.y,
 					  std::sin(radians) * normalizedPos.x - std::cos(radians) * normalizedPos.y);

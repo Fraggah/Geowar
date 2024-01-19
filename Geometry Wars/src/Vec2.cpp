@@ -89,8 +89,3 @@ double Vec2::distance(const Vec2& v1, const Vec2& v2)
 	double dy = v2.y - v1.y;
 	return std::sqrt(dx * dx + dy * dy);
 }
-
-std::ostream& operator<<(std::ostream& stream, const Vec2& lhs)
-{
-	return stream << lhs.x << " " << lhs.y << '\n';
-}
